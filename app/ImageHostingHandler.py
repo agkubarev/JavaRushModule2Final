@@ -11,13 +11,16 @@ from settings import IMAGES_PATH, \
 
 
 class ImageHostingHandler(AdvancedHTTPRequestHandler):
+    """ ImageHostingHandler class """
     server_version = 'Image Hosting Server v0.2'
 
     def __init__(self, request, client_address, server):
+        """ Constructor for ImageHostingHandler """
         self.db = DBManager()
         super().__init__(request, client_address, server)
 
     def get_images(self) -> None:
+        """ Get images """
         logger.info(self.headers.get('Query-String'))
         query_components = parse_qs(self.headers.get('Query-String'))
         page = int(query_components.get('page', ['1'])[0])
@@ -40,6 +43,7 @@ class ImageHostingHandler(AdvancedHTTPRequestHandler):
         })
 
     def post_upload(self) -> None:
+        """ Upload image """
         length = int(self.headers.get('Content-Length'))
         if length > MAX_FILE_SIZE:
             logger.warning('File too large')
@@ -63,6 +67,7 @@ class ImageHostingHandler(AdvancedHTTPRequestHandler):
             'Location': f'http://localhost/{IMAGES_PATH}{filename}{ext}'})
 
     def delete_image(self, image_id: str) -> None:
+        """ Delete image """
         logger.info(f'Try to delete image {image_id}')
         filename, ext = os.path.splitext(image_id)
         if not filename:

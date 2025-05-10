@@ -3,6 +3,7 @@ let currentPage = 1;
 const imagesPerPage = 10;
 
 function setImages(images) {
+  //Создание таблицы для загруженных изображений
   images.forEach(image => {
     const tr = document.createElement('tr');
     const tdPreview = document.createElement('td');
@@ -37,6 +38,7 @@ function setImages(images) {
 }
 
 function loadImages(page) {
+  //Загрузка изображений
   fetch(`/api/images/?page=${page}`)
     .then(response => response.json())
     .then(data => {
@@ -54,10 +56,6 @@ function loadImages(page) {
       }
     });
 }
-
-//document.getElementById('btnGoToUpload').addEventListener('click', (event) => {
-//    window.location.href = '/upload/';
-//});
 
 // Обработчики кликов для кнопок пагинации
 document.getElementById('prevPage').addEventListener('click', () => {

@@ -54,8 +54,6 @@ function handleFiles(files) {
 
 }
 
-
-
 copyButton.addEventListener('click', () => {
   navigator.clipboard.writeText(uploadUrlInput.value)
     .then(() => {
@@ -100,8 +98,4 @@ function uploadFile() {
     dropArea.classList.add('error');
   });
 }
-
-//document.getElementById('btnGoToImages').addEventListener('click', (event) => {
-//    window.location.href = '/images/';
-//});
 

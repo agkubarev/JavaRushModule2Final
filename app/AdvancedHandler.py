@@ -9,8 +9,8 @@ from settings import STATIC_PATH
 
 
 class AdvancedHTTPRequestHandler(BaseHTTPRequestHandler):
-
     def __init__(self, request, client_address, server):
+        """ Constructor for AdvancedHTTPRequestHandler """
         self.default_response = lambda: self.send_html('404.html', 404)
         self.router = Router()
         super().__init__(request, client_address, server)
@@ -19,6 +19,7 @@ class AdvancedHTTPRequestHandler(BaseHTTPRequestHandler):
                   code: int = 200,
                   headers: dict = None,
                   file_path: str = STATIC_PATH) -> None:
+        """ Send html file """
 
         self.send_response(code)
         self.send_header('Content-type', 'text/html')
@@ -31,6 +32,7 @@ class AdvancedHTTPRequestHandler(BaseHTTPRequestHandler):
 
     def send_json(self, response: dict, code: int = 200,
                   headers: dict = None) -> None:
+        """ Send json file """
         self.send_response(code)
         self.send_header('Content-type', 'application/json')
         if headers:
@@ -40,6 +42,7 @@ class AdvancedHTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(response).encode('utf-8'))
 
     def do_GET(self) -> None:
+        """ Handle GET requests """
         logger.info(f'GET {self.path}')
         handler, kwargs = self.router.resolve('GET', self.path)
         if handler:
@@ -49,6 +52,7 @@ class AdvancedHTTPRequestHandler(BaseHTTPRequestHandler):
             self.default_response()
 
     def do_POST(self) -> None:
+        """ Handle POST requests """
         logger.info(f'POST {self.path}')
         handler, kwargs = self.router.resolve('POST', self.path)
         if handler:
@@ -58,6 +62,7 @@ class AdvancedHTTPRequestHandler(BaseHTTPRequestHandler):
             self.default_response()
 
     def do_DELETE(self) -> None:
+        """ Handle DELETE requests """
         logger.info(f'DELETE {self.path}')
         handler, kwargs = self.router.resolve('DELETE', self.path)
         if handler:

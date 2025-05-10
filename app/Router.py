@@ -10,7 +10,9 @@ logger.add('logs/router.log',
 
 
 class Router(metaclass=SingletonMeta):
+    """ Router class """
     def __init__(self):
+        """ Constructor for Router """
         self.routes = {
             'GET': {},
             'POST': {},
@@ -19,10 +21,12 @@ class Router(metaclass=SingletonMeta):
 
     @staticmethod
     def convert_path_to_regex(path: str):
+        """ Convert path to regex """
         regex = re.sub(r'<(\w+)>', r'(?P<\1>[^/]+)', path)
         return f'^{regex}$'
 
     def add_route(self, method: str, path: str, handler: callable) -> None:
+        """ Add route """
         regex_pattern = self.convert_path_to_regex(path)
         pattern = re.compile(regex_pattern)
 
@@ -30,6 +34,7 @@ class Router(metaclass=SingletonMeta):
         logger.info(f'Added route: {method} {path} -> {handler.__name__}')
 
     def resolve(self, method: str, path: str) -> tuple[callable, dict]:
+        """ Resolve route """
         if method not in self.routes:
             return None, {}
         for pattern in self.routes[method]:

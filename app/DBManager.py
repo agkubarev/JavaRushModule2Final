@@ -5,6 +5,7 @@ from utils import SingletonMeta
 
 
 class DBManager(metaclass=SingletonMeta):
+    """ Class for working with database """
     def __init__(self, dbname: str = None, user: str = None,
                  password: str = None, host: str = None, port: int = None):
         self.dbname = dbname
@@ -15,6 +16,7 @@ class DBManager(metaclass=SingletonMeta):
         self.conn = self.connect()
 
     def connect(self) -> psycopg.Connection:
+        """ Connect to database """
         try:
             self.conn = psycopg.connect(
                 dbname=self.dbname,
@@ -28,9 +30,11 @@ class DBManager(metaclass=SingletonMeta):
             logger.error(f"DB connection error: {e}")
 
     def close(self) -> None:
+        """ Close database connection """
         self.conn.close()
 
     def execute(self, query: str) -> None:
+        """ Execute query """
         try:
             with self.conn.cursor() as cursor:
                 cursor.execute(query)
@@ -38,17 +42,20 @@ class DBManager(metaclass=SingletonMeta):
             logger.error(f"Error executing query: {e}")
 
     def execute_file(self, filename: str) -> None:
+        """ Execute sql file """
         try:
             self.execute(open(f'./{filename}').read())
         except FileNotFoundError:
             logger.error(f"File {filename} not found")
 
     def init_tables(self) -> None:
+        """ Initialize tables """
         self.execute_file('init_tables.sql')
         logger.info('Tables initialized')
         self.conn.commit()
 
     def get_images(self, page: int = 1) -> list[tuple]:
+        """ Get images from database """
         offset = (page - 1) * 10
         logger.info(f'Try to get images with offset {offset}')
         with self.connect().cursor() as cursor:
@@ -56,6 +63,7 @@ class DBManager(metaclass=SingletonMeta):
             return cursor.fetchall()
 
     def add_image(self, filename: str, original_name: str, length: int, ext: str) -> None:
+        """ Add image to database """
         logger.info(f'Try to add image {filename}')
         with self.conn.cursor() as cursor:
             cursor.execute(
@@ -67,11 +75,13 @@ class DBManager(metaclass=SingletonMeta):
         self.conn.commit()
 
     def clear_images(self) -> None:
+        """ Clear images from database """
         with self.conn.cursor() as cursor:
             cursor.execute("DELETE FROM images")
         self.conn.commit()
 
     def delete_image(self, filename: str) -> None:
+        """" Delete image from database """
         logger.info(f'Try to delete image {filename}')
         try:
             with self.conn.cursor() as cursor:
